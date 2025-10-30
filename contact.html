@@ -84,63 +84,94 @@
       <section class="container mx-auto px-6">
         <div class="text-center mb-16 reveal">
           <h1 class="text-5xl md:text-6xl font-bold">
-            Get In <span class="text-red-500">Touch</span>
+            Checkout & <span class="text-red-500">Contact</span>
           </h1>
           <p class="mt-4 text-lg text-gray-300">
-            We'd love to hear from you! For orders, inquiries, or feedback.
+            Please review your order and fill out your details below.
           </p>
         </div>
-        <div
-          class="max-w-2xl mx-auto bg-gray-800 p-8 rounded-lg shadow-lg border border-red-500/20 reveal"
-        >
-          <form action="https://formspree.io/f/xpwykedr" method="POST">
-            <div class="space-y-6">
-              <div>
-                <label for="name" class="block font-semibold mb-2"
-                  >Your Name</label
-                >
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  required
-                  class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
-                />
-              </div>
-              <div>
-                <label for="email" class="block font-semibold mb-2"
-                  >Your Email</label
-                >
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  required
-                  class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
-                />
-              </div>
-              <div>
-                <label for="message" class="block font-semibold mb-2"
-                  >Message</label
-                >
-                <textarea
-                  name="message"
-                  id="message"
-                  rows="5"
-                  required
-                  class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
-                ></textarea>
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row gap-12">
+          <div
+            class="w-full md:w-1/2 bg-gray-800 p-8 rounded-lg border border-red-500/20 reveal"
+          >
+            <h2 class="text-3xl font-bold mb-6">Order Summary</h2>
+            <div id="order-summary-items" class="space-y-4"></div>
+            <div
+              id="summary-empty-message"
+              class="text-center text-gray-400 py-10 hidden"
+            >
+              Your cart is empty. Please add items from the menu.
+            </div>
+            <div
+              id="summary-footer"
+              class="mt-6 border-t border-gray-700 pt-4 hidden"
+            >
+              <div class="flex justify-between items-center text-xl font-bold">
+                <span>Total</span>
+                <span id="summary-total">$0.00</span>
               </div>
             </div>
-            <div class="mt-8">
-              <button
-                type="submit"
-                class="w-full bg-red-600 py-3 rounded-md font-semibold hover:bg-red-700 transition"
-              >
-                Send Message
-              </button>
-            </div>
-          </form>
+          </div>
+
+          <div
+            class="w-full md:w-1/2 bg-gray-800 p-8 rounded-lg shadow-lg border border-red-500/20 reveal"
+          >
+            <form action="https://formspree.io/f/xpwykedr" method="POST">
+              <input
+                type="hidden"
+                name="Order Details"
+                id="order-details-input"
+              />
+
+              <div class="space-y-6">
+                <div>
+                  <label for="name" class="block font-semibold mb-2"
+                    >Your Name</label
+                  >
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    required
+                    class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+                <div>
+                  <label for="email" class="block font-semibold mb-2"
+                    >Your Email</label
+                  >
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+                <div>
+                  <label for="message" class="block font-semibold mb-2"
+                    >Address & Instructions</label
+                  >
+                  <textarea
+                    name="message"
+                    id="message"
+                    rows="5"
+                    required
+                    placeholder="Your full delivery address..."
+                    class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="mt-8">
+                <button
+                  type="submit"
+                  class="w-full bg-red-600 py-3 rounded-md font-semibold hover:bg-red-700 transition"
+                >
+                  Place Order
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
     </main>
@@ -150,7 +181,61 @@
         <p>&copy; 2025 SWEET CAKERY. All Rights Reserved.</p>
       </div>
     </footer>
+
     <script>
+      // **NEW: Load cart data and build summary on page load**
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedCart = sessionStorage.getItem("sweetCakeryCart");
+        const summaryItemsContainer = document.getElementById(
+          "order-summary-items"
+        );
+        const summaryTotalEl = document.getElementById("summary-total");
+        const hiddenInput = document.getElementById("order-details-input");
+        const emptyMessage = document.getElementById("summary-empty-message");
+        const summaryFooter = document.getElementById("summary-footer");
+
+        if (savedCart && JSON.parse(savedCart).length > 0) {
+          const cart = JSON.parse(savedCart);
+          let total = 0;
+          let orderDetailsText = "--- ORDER DETAILS ---\n";
+
+          summaryFooter.classList.remove("hidden");
+
+          cart.forEach((item) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const itemEl = document.createElement("div");
+            itemEl.className = "flex justify-between items-center";
+            itemEl.innerHTML = `
+                        <div>
+                            <p class="font-semibold">${
+                              item.name
+                            } <span class="text-gray-400">x ${
+              item.quantity
+            }</span></p>
+                        </div>
+                        <p class="font-semibold">$${itemTotal.toFixed(2)}</p>
+                    `;
+            summaryItemsContainer.appendChild(itemEl);
+
+            // Prepare text for the hidden input
+            orderDetailsText += `${item.name} x ${
+              item.quantity
+            } = $${itemTotal.toFixed(2)}\n`;
+          });
+
+          summaryTotalEl.textContent = `$${total.toFixed(2)}`;
+
+          // Add total to the text and set it to the hidden input
+          orderDetailsText += `\nTOTAL: $${total.toFixed(2)}`;
+          hiddenInput.value = orderDetailsText;
+        } else {
+          emptyMessage.classList.remove("hidden");
+        }
+      });
+
+      // Basic Page Logic
       const menuBtn = document.getElementById("menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
       menuBtn.addEventListener("click", () =>

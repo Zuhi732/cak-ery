@@ -51,15 +51,27 @@
           >SWEET CAKERY</a
         >
         <div class="hidden md:flex items-center space-x-8">
-          <a href="index.html" class="hover:text-red-500 transition">Home</a
-          ><a href="about.html" class="hover:text-red-500 transition">About</a>
+          <a href="index.html" class="hover:text-red-500 transition">Home</a>
+          <a href="about.html" class="hover:text-red-500 transition">About</a>
           <a href="menu.html" class="text-red-500 font-bold">Menu</a>
           <a href="courses.html" class="hover:text-red-500 transition"
             >Courses</a
-          ><a href="offers.html" class="hover:text-red-500 transition">Offers</a
-          ><a href="contact.html" class="hover:text-red-500 transition"
+          >
+          <a href="offers.html" class="hover:text-red-500 transition">Offers</a>
+          <a href="contact.html" class="hover:text-red-500 transition"
             >Contact</a
           >
+          <button
+            onclick="openCart()"
+            class="relative hover:text-red-500 transition"
+          >
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+            <span
+              id="cart-count"
+              class="absolute -top-2 -right-3 bg-white text-red-500 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
+              >0</span
+            >
+          </button>
         </div>
         <button id="menu-btn" class="md:hidden text-2xl">
           <i class="fa-solid fa-bars"></i>
@@ -97,7 +109,7 @@
             class="menu-card bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-red-500/20 reveal"
           >
             <img
-              src="image/Gemini_Generated_Image_gvlsm4gvlsm4gvls.png"
+              src="image/Red-Velvate.png"
               alt="Red Velvet Cake"
               class="w-full h-64 object-cover"
             />
@@ -106,14 +118,22 @@
               <p class="text-gray-400 mb-4">
                 Classic red velvet with a rich cream cheese frosting.
               </p>
-              <p class="text-xl font-semibold text-red-400">$25.00</p>
+              <div class="flex justify-between items-center">
+                <p class="text-xl font-semibold text-red-400">$25.00</p>
+                <button
+                  onclick="addToCart('rvs', 'Red Velvet Supreme', 25.00)"
+                  class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition"
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
           <div
             class="menu-card bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-red-500/20 reveal"
           >
             <img
-              src="image/Gemini_Generated_Image_f8rrlnf8rrlnf8rr.png"
+              src="image/cocholate-cake.png"
               alt="Chocolate Fudge Cake"
               class="w-full h-64 object-cover"
             />
@@ -122,7 +142,15 @@
               <p class="text-gray-400 mb-4">
                 A decadent chocolate cake for the ultimate chocolate lover.
               </p>
-              <p class="text-xl font-semibold text-red-400">$30.00</p>
+              <div class="flex justify-between items-center">
+                <p class="text-xl font-semibold text-red-400">$30.00</p>
+                <button
+                  onclick="addToCart('cfd', 'Chocolate Fudge Delight', 30.00)"
+                  class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition"
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
           <div
@@ -138,19 +166,165 @@
               <p class="text-gray-400 mb-4">
                 Light and fluffy cake with fresh strawberries and cream.
               </p>
-              <p class="text-xl font-semibold text-red-400">$28.00</p>
+              <div class="flex justify-between items-center">
+                <p class="text-xl font-semibold text-red-400">$28.00</p>
+                <button
+                  onclick="addToCart('shc', 'Strawberry Heaven', 28.00)"
+                  class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition"
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </main>
 
+    <div
+      id="cart-modal"
+      class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-gray-800 w-full max-w-2xl rounded-lg shadow-xl p-6 relative"
+      >
+        <button
+          onclick="closeCart()"
+          class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-white"
+        >
+          &times;
+        </button>
+        <h2 class="text-3xl font-bold mb-6 border-b border-gray-700 pb-4">
+          Your Cart
+        </h2>
+        <div id="cart-items" class="space-y-4 max-h-80 overflow-y-auto"></div>
+        <div
+          id="cart-empty-message"
+          class="text-center text-gray-400 py-10 hidden"
+        >
+          Your cart is empty.
+        </div>
+        <div id="cart-footer" class="mt-6 border-t border-gray-700 pt-4 hidden">
+          <div class="flex justify-between items-center text-xl font-bold">
+            <span>Total</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+          <a
+            href="contact.html"
+            class="block w-full text-center bg-red-600 mt-6 py-3 rounded-md font-semibold hover:bg-red-700 transition"
+            >Proceed to Checkout</a
+          >
+        </div>
+      </div>
+    </div>
+
     <footer class="bg-black py-8">
       <div class="container mx-auto text-center text-gray-400">
         <p>&copy; 2025 SWEET CAKERY. All Rights Reserved.</p>
       </div>
     </footer>
+
     <script>
+      let cart = [];
+
+      const cartModal = document.getElementById("cart-modal");
+      const cartItemsContainer = document.getElementById("cart-items");
+      const cartTotalEl = document.getElementById("cart-total");
+      const cartCountEl = document.getElementById("cart-count");
+      const cartEmptyMessage = document.getElementById("cart-empty-message");
+      const cartFooter = document.getElementById("cart-footer");
+
+      // **NEW: Load cart from sessionStorage when page loads**
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedCart = sessionStorage.getItem("sweetCakeryCart");
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+          updateCartDisplay();
+        }
+      });
+
+      function addToCart(id, name, price) {
+        const existingItem = cart.find((item) => item.id === id);
+        if (existingItem) {
+          existingItem.quantity++;
+        } else {
+          cart.push({ id, name, price, quantity: 1 });
+        }
+        updateCartDisplay();
+      }
+
+      function changeQuantity(id, change) {
+        const item = cart.find((item) => item.id === id);
+        if (item) {
+          item.quantity += change;
+          if (item.quantity <= 0) {
+            cart = cart.filter((item) => item.id !== id);
+          }
+        }
+        updateCartDisplay();
+      }
+
+      function updateCartDisplay() {
+        cartItemsContainer.innerHTML = "";
+        let total = 0;
+
+        if (cart.length === 0) {
+          cartEmptyMessage.classList.remove("hidden");
+          cartFooter.classList.add("hidden");
+        } else {
+          cartEmptyMessage.classList.add("hidden");
+          cartFooter.classList.remove("hidden");
+
+          cart.forEach((item) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const itemEl = document.createElement("div");
+            itemEl.className =
+              "flex justify-between items-center bg-gray-700 p-4 rounded-md";
+            itemEl.innerHTML = `
+                        <div>
+                            <p class="font-semibold">${item.name}</p>
+                            <p class="text-sm text-gray-400">$${item.price.toFixed(
+                              2
+                            )}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center border border-gray-600 rounded">
+                                <button onclick="changeQuantity('${
+                                  item.id
+                                }', -1)" class="w-8 h-8 font-bold text-lg hover:bg-gray-600">-</button>
+                                <span class="w-10 text-center">${
+                                  item.quantity
+                                }</span>
+                                <button onclick="changeQuantity('${
+                                  item.id
+                                }', 1)" class="w-8 h-8 font-bold text-lg hover:bg-gray-600">+</button>
+                            </div>
+                            <p class="w-20 text-right font-semibold">$${itemTotal.toFixed(
+                              2
+                            )}</p>
+                        </div>
+                    `;
+            cartItemsContainer.appendChild(itemEl);
+          });
+        }
+
+        cartTotalEl.textContent = `$${total.toFixed(2)}`;
+        cartCountEl.textContent = cart.length;
+
+        // **NEW: Save cart to sessionStorage after every update**
+        sessionStorage.setItem("sweetCakeryCart", JSON.stringify(cart));
+      }
+
+      function openCart() {
+        cartModal.classList.remove("hidden");
+      }
+      function closeCart() {
+        cartModal.classList.add("hidden");
+      }
+
+      // Basic Page Logic
       const menuBtn = document.getElementById("menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
       menuBtn.addEventListener("click", () =>
