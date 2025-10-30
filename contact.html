@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact Us - Sweet Cakery</title>
+    <title>Checkout - Sweet Cakery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -33,6 +33,11 @@
         opacity: 1;
         transform: translateY(0);
       }
+      input:focus,
+      textarea:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+      }
       .nav-link {
         position: relative;
         padding-bottom: 4px;
@@ -52,11 +57,6 @@
       .nav-link:hover::after,
       .nav-link.active::after {
         transform: scaleX(1);
-      }
-      input:focus,
-      textarea:focus {
-        border-color: #ef4444;
-        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
       }
     </style>
   </head>
@@ -162,10 +162,11 @@
           <div
             class="w-full md:w-1/2 bg-gray-800 p-8 rounded-lg shadow-lg border border-red-500/20 reveal"
           >
+            <h2 class="text-3xl font-bold mb-6">Your Details & Payment</h2>
             <form action="https://formspree.io/f/xpwykedr" method="POST">
               <input
                 type="hidden"
-                name="Order Details"
+                name="Order_Details"
                 id="order-details-input"
               />
               <div class="space-y-6">
@@ -195,16 +196,100 @@
                 </div>
                 <div>
                   <label for="message" class="block font-semibold mb-2"
-                    >Address & Instructions</label
+                    >Address & Phone</label
                   >
                   <textarea
-                    name="message"
+                    name="address_and_phone"
                     id="message"
-                    rows="5"
+                    rows="4"
                     required
-                    placeholder="Your full delivery address..."
+                    placeholder="Your full delivery address and phone number..."
                     class="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-red-500"
                   ></textarea>
+                </div>
+
+                <div>
+                  <label class="block font-semibold mb-3">Payment Method</label>
+                  <div class="space-y-3">
+                    <div
+                      class="flex items-center bg-gray-900 p-3 rounded-md border border-gray-700 has-[:checked]:border-red-500"
+                    >
+                      <input
+                        type="radio"
+                        id="cod"
+                        name="Payment_Method"
+                        value="Cash on Delivery"
+                        checked
+                        class="h-4 w-4 text-red-600 bg-gray-700 border-gray-600 focus:ring-red-500"
+                      />
+                      <label for="cod" class="ml-3 block text-sm font-medium"
+                        >Cash on Delivery</label
+                      >
+                    </div>
+                    <div
+                      class="flex items-center bg-gray-900 p-3 rounded-md border border-gray-700 has-[:checked]:border-red-500"
+                    >
+                      <input
+                        type="radio"
+                        id="bkash"
+                        name="Payment_Method"
+                        value="bKash"
+                        class="h-4 w-4 text-red-600 bg-gray-700 border-gray-600 focus:ring-red-500"
+                      />
+                      <label for="bkash" class="ml-3 block text-sm font-medium"
+                        >Pay with bKash</label
+                      >
+                    </div>
+                    <div
+                      class="flex items-center bg-gray-900 p-3 rounded-md border border-gray-700 has-[:checked]:border-red-500"
+                    >
+                      <input
+                        type="radio"
+                        id="stripe"
+                        name="Payment_Method"
+                        value="Pay with Stripe"
+                        class="h-4 w-4 text-red-600 bg-gray-700 border-gray-600 focus:ring-red-500"
+                      />
+                      <label for="stripe" class="ml-3 block text-sm font-medium"
+                        >Pay with Stripe (Card)</label
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  id="bkash-instructions"
+                  class="hidden p-4 bg-gray-700/50 rounded-lg text-center"
+                >
+                  <p class="mb-2">
+                    Please send the total amount to this bKash merchant number:
+                  </p>
+                  <p class="font-bold text-lg text-red-400">01xxxxxxxxx</p>
+                  <a
+                    href="#"
+                    id="bkash-link"
+                    class="mt-4 inline-block bg-pink-600 text-white px-5 py-2 rounded-md font-semibold text-sm"
+                    >Open bKash App</a
+                  >
+                  <p class="text-xs text-gray-400 mt-2">
+                    After payment, please mention the TrxID in the address field
+                    above.
+                  </p>
+                </div>
+                <div
+                  id="stripe-instructions"
+                  class="hidden p-4 bg-gray-700/50 rounded-lg text-center"
+                >
+                  <p class="mb-3">
+                    Click the button below to pay securely with your card.
+                  </p>
+                  <a
+                    href="https://buy.stripe.com/test_aFa00l72V38Y1RRbCe4Ja02"
+                    target="_blank"
+                    class="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition inline-flex items-center justify-center gap-2"
+                  >
+                    <i class="fa-solid fa-credit-card"></i> Pay Now with Stripe
+                  </a>
                 </div>
               </div>
               <div class="mt-8">
@@ -226,6 +311,7 @@
         <p>&copy; 2025 SWEET CAKERY. All Rights Reserved.</p>
       </div>
     </footer>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const savedCart = sessionStorage.getItem("sweetCakeryCart");
@@ -236,16 +322,16 @@
         const hiddenInput = document.getElementById("order-details-input");
         const emptyMessage = document.getElementById("summary-empty-message");
         const summaryFooter = document.getElementById("summary-footer");
+        let totalAmount = 0;
 
         if (savedCart && JSON.parse(savedCart).length > 0) {
           const cart = JSON.parse(savedCart);
-          let total = 0;
           let orderDetailsText = "--- ORDER DETAILS ---\n";
           summaryFooter.classList.remove("hidden");
 
           cart.forEach((item) => {
             const itemTotal = item.price * item.quantity;
-            total += itemTotal;
+            totalAmount += itemTotal;
 
             const itemEl = document.createElement("div");
             itemEl.className = "flex justify-between items-center";
@@ -262,12 +348,39 @@
             } = $${itemTotal.toFixed(2)}\n`;
           });
 
-          summaryTotalEl.textContent = `$${total.toFixed(2)}`;
-          orderDetailsText += `\nTOTAL: $${total.toFixed(2)}`;
+          summaryTotalEl.textContent = `$${totalAmount.toFixed(2)}`;
+          orderDetailsText += `\nTOTAL: $${totalAmount.toFixed(2)}`;
           hiddenInput.value = orderDetailsText;
         } else {
           emptyMessage.classList.remove("hidden");
+          document.querySelector("form").classList.add("hidden"); // Hide form if cart is empty
         }
+
+        // --- Payment Method Logic ---
+        const paymentRadios = document.querySelectorAll(
+          'input[name="Payment_Method"]'
+        );
+        const bKashInstructions = document.getElementById("bkash-instructions");
+        const stripeInstructions = document.getElementById(
+          "stripe-instructions"
+        );
+        const bkashLink = document.getElementById("bkash-link");
+
+        // This is a placeholder for bKash deep link, you should update it if needed.
+        bkashLink.href = `bkash://payment?pin=YOUR_BKASH_NUMBER&amount=${totalAmount}&ref=ORDER_ID`;
+
+        paymentRadios.forEach((radio) => {
+          radio.addEventListener("change", () => {
+            bKashInstructions.classList.add("hidden");
+            stripeInstructions.classList.add("hidden");
+
+            if (radio.id === "bkash" && radio.checked) {
+              bKashInstructions.classList.remove("hidden");
+            } else if (radio.id === "stripe" && radio.checked) {
+              stripeInstructions.classList.remove("hidden");
+            }
+          });
+        });
       });
 
       const menuBtn = document.getElementById("menu-btn");
