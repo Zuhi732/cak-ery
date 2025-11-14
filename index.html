@@ -53,6 +53,12 @@
       .nav-link.active::after {
         transform: scaleX(1);
       }
+      /* Accordion styles */
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
     </style>
   </head>
   <body class="bg-gray-900 text-white">
@@ -154,6 +160,86 @@
           />
         </div>
       </section>
+
+      <section class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6 max-w-4xl">
+          <div class="text-center mb-16 reveal">
+            <h2 class="text-4xl md:text-5xl font-bold">
+              Things to <span class="text-red-500">Know</span>
+            </h2>
+            <p class="mt-4 text-lg text-gray-300">
+              অর্ডার করার আগে কিছু বিষয় জেনে রাখা ভালো
+            </p>
+          </div>
+
+          <div class="space-y-4 reveal">
+            <div class="bg-gray-900 rounded-lg border border-red-500/20">
+              <button
+                class="accordion-toggle flex justify-between items-center w-full p-6"
+              >
+                <span class="text-xl font-semibold text-red-400"
+                  >অর্ডার করার আগে...</span
+                >
+                <i class="fa-solid fa-chevron-down transition-transform"></i>
+              </button>
+              <div class="accordion-content px-6 pb-6">
+                <ul class="space-y-3 text-gray-300 list-disc list-inside">
+                  <li> সর্বনিম্ন অর্ডার এক পাউন্ড থেকে শুরু।</li>
+                  <li>আমাদের কেক অর্ডার কনফার্ম হওয়ার পর স্বাস্থ্যসম্মত ভাবে মেইক করা হয়।</li>
+                  <li>কাস্টোমাইজড কেক মিনিমাম ২ থেকে ৩ দিন আগে এবং কেক একদিন আগে অর্ডার নেওয়া হয়।</li>
+                  <li>প্রাইস, ফ্লেভারস, ডিজাইন, পাউন্ড নিশ্চিত হয়ে অর্ডার প্রেস করবেন।</li>
+                  <li>ফনডেন্ট কিম্বা থিম কেকের জন্য এক্সট্রা চার্জ প্রযোজ্য।</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-lg border border-red-500/20">
+              <button
+                class="accordion-toggle flex justify-between items-center w-full p-6"
+              >
+                <span class="text-xl font-semibold text-red-400"
+                  >বিশেষ তথ্যাবলী (কেকের ওজন)</span
+                >
+                <i class="fa-solid fa-chevron-down transition-transform"></i>
+              </button>
+              <div class="accordion-content px-6 pb-6">
+                <ul class="space-y-3 text-gray-300 list-disc list-inside">
+                  <li>প্রতিটা জার কেক 250 গ্রাম+ এর মতো কেক থাকে।</li>
+                  <li>প্রতিটা বক্স কেক 350 গ্রাম+ এর মতো কেক থাকে।</li>
+                  <li>454 গ্রামে 1 পাউন্ড। আমাদের 1 পাউন্ড কেক সবসময় 100 গ্রাম+ কেক বেশি থাকে।</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-lg border border-red-500/20">
+              <button
+                class="accordion-toggle flex justify-between items-center w-full p-6"
+              >
+                <span class="text-xl font-semibold text-red-400"
+                  >অর্ডার ও ডেলিভারি নিয়মাবলী</span
+                >
+                <i class="fa-solid fa-chevron-down transition-transform"></i>
+              </button>
+              <div class="accordion-content px-6 pb-6">
+                <ul class="space-y-4 text-gray-300">
+                    <li>
+                        <strong class="text-red-400 flex items-center gap-2"><i class="fa-solid fa-motorcycle"></i> নোয়াখালীর ভেতরে ডেলিভারি:</strong>
+                        <p class="pl-6 text-gray-400">নোয়াখালী সদরের ভেতরে কেক, চকোলেট সহ মেন্যুর সকল আইটেম অর্ডার নেওয়া হয় ।</p>
+                    </li>
+                    <li>
+                        <strong class="text-red-400 flex items-center gap-2"><i class="fa-solid fa-box-open"></i> নোয়াখালীর বাইরে ডেলিভারি:</strong>
+                        <p class="pl-6 text-gray-400">সারা বাংলাদেশে কুরিয়ারের মাধ্যমে ডেলিভারি করা হয়। তবে, কেক পচনশীল হওয়ায় নোয়াখালীর বাইরে <strong class="text-white">শুধুমাত্র চকোলেট আইটেম</strong> (যেমন: চকোলেট বার, ট্রাফল) অর্ডার নেওয়া হয়।</p>
+                    </li>
+                    <li>
+                        <strong class="text-red-400 flex items-center gap-2"><i class="fa-solid fa-cart-plus"></i> কিভাবে অর্ডার করবেন:</strong>
+                        <p class="pl-6 text-gray-400">অর্ডার কনফার্ম করতে আমাদের ফেইসবুক পেইজে মেসেজ করুন অথবা সরাসরি এই <a href="contact.html" class="font-semibold underline hover:text-red-500">কন্টাক্ট পেইজ</a> থেকে ফর্ম পূরণ করুন।</g>
+                    </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="bg-black py-8">
@@ -163,11 +249,14 @@
     </footer>
 
     <script>
+      // Mobile Menu Toggle
       const menuBtn = document.getElementById("menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
       menuBtn.addEventListener("click", () =>
         mobileMenu.classList.toggle("hidden")
       );
+
+      // Reveal on Scroll
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -179,6 +268,25 @@
       document
         .querySelectorAll(".reveal")
         .forEach((el) => observer.observe(el));
+
+      // Accordion Script
+      const accordions = document.querySelectorAll(".accordion-toggle");
+      accordions.forEach((button) => {
+        button.addEventListener("click", () => {
+          const content = button.nextElementSibling;
+          const icon = button.querySelector("i");
+
+          if (content.style.maxHeight) {
+            // Collapse
+            content.style.maxHeight = null;
+            icon.style.transform = "rotate(0deg)";
+          } else {
+            // Expand
+            content.style.maxHeight = content.scrollHeight + "px";
+            icon.style.transform = "rotate(180deg)";
+          }
+        });
+      });
     </script>
   </body>
 </html>
