@@ -281,20 +281,6 @@
                         >Pay with bKash</label
                       >
                     </div>
-                    <div
-                      class="flex items-center bg-gray-900 p-3 rounded-md border border-gray-700 has-[:checked]:border-red-500"
-                    >
-                      <input
-                        type="radio"
-                        id="stripe"
-                        name="Payment_Method"
-                        value="Pay with Stripe"
-                        class="h-4 w-4 text-red-600 bg-gray-700 border-gray-600 focus:ring-red-500"
-                      />
-                      <label for="stripe" class="ml-3 block text-sm font-medium"
-                        >Pay with Stripe (Card)</label
-                      >
-                    </div>
                   </div>
                 </div>
 
@@ -325,26 +311,11 @@
                     TrxID in the address field above.
                   </p>
                 </div>
-
-                <div
-                  id="stripe-instructions"
-                  class="hidden p-4 bg-gray-700/50 rounded-lg text-center"
-                >
-                  <p class="mb-3">
-                    Click the button below to pay securely with your card.
-                  </p>
-                  <a
-                    href="https://buy.stripe.com/test_aFa00l72V38Y1RRbCe4Ja02"
-                    target="_blank"
-                    class="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition inline-flex items-center justify-center gap-2"
-                  >
-                    <i class="fa-solid fa-credit-card"></i> Pay Now with Stripe
-                  </a>
-                </div>
               </div>
               <div class="mt-8">
                 <button
                   type="submit"
+                  id="place-order-button"
                   class="w-full bg-red-600 py-3 rounded-md font-semibold hover:bg-red-700 transition"
                 >
                   Place Order
@@ -373,6 +344,9 @@
         const emptyMessage = document.getElementById("summary-empty-message");
         const summaryFooter = document.getElementById("summary-footer");
         const formContainer = document.querySelector("form");
+
+        // **NEW: Select the Place Order Button**
+        const placeOrderBtn = document.getElementById("place-order-button");
 
         if (savedCart && JSON.parse(savedCart).length > 0) {
           const cart = JSON.parse(savedCart);
@@ -404,8 +378,14 @@
           hiddenInput.value = orderDetailsText;
         } else {
           emptyMessage.classList.remove("hidden");
-          if (formContainer)
-            formContainer.parentElement.classList.add("hidden"); // Hide the entire form card
+
+          // **FIXED LOGIC:**
+          // Instead of hiding the form, we disable the button
+          if (placeOrderBtn) {
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.textContent = "Your cart is empty";
+            placeOrderBtn.classList.add("opacity-50", "cursor-not-allowed");
+          }
         }
 
         const paymentRadios = document.querySelectorAll(
@@ -419,17 +399,18 @@
         paymentRadios.forEach((radio) => {
           radio.addEventListener("change", () => {
             bKashInstructions.classList.add("hidden");
-            stripeInstructions.classList.add("hidden");
+            // Stripe instructions are already removed from HTML, but we keep this line for safety
+            if (stripeInstructions) {
+              stripeInstructions.classList.add("hidden");
+            }
 
             if (radio.id === "bkash" && radio.checked) {
               bKashInstructions.classList.remove("hidden");
-            } else if (radio.id === "stripe" && radio.checked) {
-              stripeInstructions.classList.remove("hidden");
             }
           });
         });
 
-        // *** Delivery/Pickup Logic (সঠিকভাবে যোগ করা হয়েছে) ***
+        // Delivery/Pickup Logic
         const deliveryRadios = document.querySelectorAll(
           'input[name="Delivery_Method"]'
         );
@@ -442,10 +423,10 @@
           radio.addEventListener("change", () => {
             if (radio.id === "pickup" && radio.checked) {
               addressContainer.classList.add("hidden");
-              addressTextarea.required = false; // ঠিকানা আর আবশ্যিক নয়
+              addressTextarea.required = false;
             } else {
               addressContainer.classList.remove("hidden");
-              addressTextarea.required = true; // ঠিকানা আবার আবশ্যিক
+              addressTextarea.required = true;
             }
           });
         });
